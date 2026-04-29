@@ -1,0 +1,19 @@
+{
+    "name": "ThirtySixStratagems.AI",
+    "rootNamespace": "ThirtySixStratagems.AI",
+    "references": [
+        "ThirtySixStratagems.Core",
+        "ThirtySixStratagems.Data",
+        "ThirtySixStratagems.Battle",
+        "ThirtySixStratagems.Stratagem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
