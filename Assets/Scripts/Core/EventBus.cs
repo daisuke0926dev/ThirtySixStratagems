@@ -31,6 +31,9 @@ namespace ThirtySixStratagems.Core
         /// <summary>フェーズが変更された</summary>
         public static event Action<TurnPhase> OnPhaseChanged;
 
+        /// <summary>フェーズが変更された（エイリアス）</summary>
+        public static event Action<TurnPhase> OnTurnPhaseChanged;
+
         /// <summary>勢力のターンが開始された</summary>
         public static event Action<string> OnFactionTurnStarted;
 
@@ -47,6 +50,9 @@ namespace ThirtySixStratagems.Core
 
         /// <summary>領地が占領された</summary>
         public static event Action<TerritoryConqueredEventArgs> OnTerritoryConquered;
+
+        /// <summary>領地の状態が変更された</summary>
+        public static event Action<string> OnTerritoryChanged;
 
         // ========== 計略イベント ==========
 
@@ -153,6 +159,7 @@ namespace ThirtySixStratagems.Core
         public static void PhaseChanged(TurnPhase phase)
         {
             OnPhaseChanged?.Invoke(phase);
+            OnTurnPhaseChanged?.Invoke(phase);
         }
 
         public static void FactionTurnStarted(string factionId)
@@ -182,6 +189,11 @@ namespace ThirtySixStratagems.Core
         public static void TerritoryConquered(TerritoryConqueredEventArgs args)
         {
             OnTerritoryConquered?.Invoke(args);
+        }
+
+        public static void TerritoryChanged(string territoryId)
+        {
+            OnTerritoryChanged?.Invoke(territoryId);
         }
 
         #endregion
@@ -321,6 +333,8 @@ namespace ThirtySixStratagems.Core
             OnBattleStarted = null;
             OnBattleEnded = null;
             OnTerritoryConquered = null;
+            OnTerritoryChanged = null;
+            OnTurnPhaseChanged = null;
             OnStratagemExecuted = null;
             OnStratagemSucceeded = null;
             OnStratagemFailed = null;
