@@ -18,6 +18,7 @@ namespace ThirtySixStratagems.Campaign
         [Header("データベース")]
         [SerializeField] private ScenarioDatabase _scenarioDatabase;
         [SerializeField] private StratagemDatabase _stratagemDatabase;
+        [SerializeField] private CharacterDatabase _characterDatabase;
 
         [Header("デフォルト値")]
         [SerializeField] private int _defaultSoldiers = 5000;
@@ -177,27 +178,50 @@ namespace ThirtySixStratagems.Campaign
         /// </summary>
         private void CreateCharacters(GameData gameData, ScenarioData scenario)
         {
-            // シナリオに定義された武将を作成
-            // 実際の実装ではCharacterDatabaseから読み込む
-
             foreach (var factionData in scenario.Factions)
             {
                 foreach (var charId in factionData.StartingCharacterIds)
                 {
-                    // 既存のCharacterDatabaseから取得するか、デフォルト作成
-                    var character = CreateDefaultCharacter(charId, factionData.FactionId, scenario.Year);
-                    gameData.Characters[character.Id] = character;
+                    // CharacterDatabaseから取得を試みる
+                    var character = CreateCharacterFromDatabase(charId, factionData.FactionId, scenario.Year);
+                    if (character != null)
+                    {
+                        gameData.Characters[character.Id] = character;
+                    }
                 }
 
                 // リーダーを確認
                 if (!string.IsNullOrEmpty(factionData.LeaderId) &&
                     !gameData.Characters.ContainsKey(factionData.LeaderId))
                 {
-                    var leader = CreateDefaultCharacter(factionData.LeaderId, factionData.FactionId, scenario.Year);
-                    leader.Name = factionData.LeaderName;
-                    gameData.Characters[leader.Id] = leader;
+                    var leader = CreateCharacterFromDatabase(factionData.LeaderId, factionData.FactionId, scenario.Year);
+                    if (leader != null)
+                    {
+                        leader.Name = factionData.LeaderName;
+                        gameData.Characters[leader.Id] = leader;
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// データベースから武将を作成
+        /// </summary>
+        private Character CreateCharacterFromDatabase(string charId, string factionId, int year)
+        {
+            // CharacterDatabaseから取得
+            var charData = _characterDatabase?.GetById(charId);
+
+            if (charData != null)
+            {
+                // データベースから武将を生成
+                var character = charData.CreateCharacter();
+                character.FactionId = factionId;
+                return character;
+            }
+
+            // データベースにない場合はデフォルト作成
+            return CreateDefaultCharacter(charId, factionId, year);
         }
 
         /// <summary>
@@ -214,10 +238,10 @@ namespace ThirtySixStratagems.Campaign
                 Intelligence = UnityEngine.Random.Range(40, 80),
                 Leadership = UnityEngine.Random.Range(40, 80),
                 Politics = UnityEngine.Random.Range(40, 80),
-                Charm = UnityEngine.Random.Range(40, 80),
+                Charisma = UnityEngine.Random.Range(40, 80),
                 Loyalty = 80,
-                BirthYear = year - UnityEngine.Random.Range(20, 50),
-                Experience = 0
+                IsAlive = true,
+                IsCaptured = false
             };
         }
 

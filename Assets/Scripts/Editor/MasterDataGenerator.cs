@@ -164,6 +164,9 @@ namespace ThirtySixStratagems.Editor
 
             _territoryCache.Clear();
 
+            // 領地データベース
+            var database = ScriptableObject.CreateInstance<TerritoryDatabase>();
+
             foreach (var def in SampleDataDefinitions.SampleTerritories)
             {
                 var territory = ScriptableObject.CreateInstance<TerritoryData>();
@@ -180,10 +183,14 @@ namespace ThirtySixStratagems.Editor
                 AssetDatabase.CreateAsset(territory, assetPath);
 
                 _territoryCache[def.Id] = territory;
+                database.AddTerritory(territory);
             }
 
             // 隣接領地の設定
             SetupAdjacentTerritories();
+
+            // データベースを保存
+            AssetDatabase.CreateAsset(database, $"{folderPath}/TerritoryDatabase.asset");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -230,6 +237,9 @@ namespace ThirtySixStratagems.Editor
 
             _characterCache.Clear();
 
+            // 武将データベース
+            var database = ScriptableObject.CreateInstance<CharacterDatabase>();
+
             foreach (var def in SampleDataDefinitions.SampleCharacters)
             {
                 var character = ScriptableObject.CreateInstance<CharacterData>();
@@ -249,7 +259,11 @@ namespace ThirtySixStratagems.Editor
                 AssetDatabase.CreateAsset(character, assetPath);
 
                 _characterCache[def.Id] = character;
+                database.AddCharacter(character);
             }
+
+            // データベースを保存
+            AssetDatabase.CreateAsset(database, $"{folderPath}/CharacterDatabase.asset");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -263,6 +277,9 @@ namespace ThirtySixStratagems.Editor
             EnsureDirectoryExists(folderPath);
 
             _factionCache.Clear();
+
+            // 勢力データベース
+            var database = ScriptableObject.CreateInstance<FactionDatabase>();
 
             foreach (var def in SampleDataDefinitions.SampleFactions)
             {
@@ -282,7 +299,11 @@ namespace ThirtySixStratagems.Editor
                 AssetDatabase.CreateAsset(faction, assetPath);
 
                 _factionCache[def.Id] = faction;
+                database.AddFaction(faction);
             }
+
+            // データベースを保存
+            AssetDatabase.CreateAsset(database, $"{folderPath}/FactionDatabase.asset");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
