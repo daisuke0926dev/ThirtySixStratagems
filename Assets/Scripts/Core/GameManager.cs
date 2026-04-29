@@ -23,6 +23,7 @@ namespace ThirtySixStratagems.Core
 
         // ランタイムデータ
         private GameData _gameData;
+        private int _currentYear;
 
         // イベント
         public event Action<GameState> OnGameStateChanged;
@@ -60,6 +61,11 @@ namespace ThirtySixStratagems.Core
         /// 計略データベース
         /// </summary>
         public StratagemDatabase StratagemDatabase => _stratagemDatabase;
+
+        /// <summary>
+        /// 現在の年
+        /// </summary>
+        public int CurrentYear => _currentYear;
 
         /// <summary>
         /// ゲームがプレイ中か
@@ -111,6 +117,25 @@ namespace ThirtySixStratagems.Core
 
             // ゲームシーンに遷移
             LoadScene("GameScene");
+        }
+
+        /// <summary>
+        /// ゲームデータを設定（ScenarioLoaderから呼ばれる）
+        /// </summary>
+        public void SetGameData(GameData gameData)
+        {
+            _gameData = gameData;
+            CurrentState = GameState.Playing;
+            Debug.Log($"GameData set: {gameData?.Factions?.Count ?? 0} factions, {gameData?.Territories?.Count ?? 0} territories");
+        }
+
+        /// <summary>
+        /// 現在の年を設定
+        /// </summary>
+        public void SetCurrentYear(int year)
+        {
+            _currentYear = year;
+            Debug.Log($"Current year set to: {year}");
         }
 
         /// <summary>
