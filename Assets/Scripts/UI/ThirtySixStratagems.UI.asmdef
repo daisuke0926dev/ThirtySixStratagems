@@ -6,7 +6,8 @@
         "Unity.TextMeshPro",
         "ThirtySixStratagems.Core",
         "ThirtySixStratagems.Data",
-        "ThirtySixStratagems.Systems"
+        "ThirtySixStratagems.Systems",
+        "ThirtySixStratagems.Stratagem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
