@@ -1,0 +1,17 @@
+{
+    "name": "ThirtySixStratagems.Stratagem",
+    "rootNamespace": "ThirtySixStratagems.Stratagem",
+    "references": [
+        "ThirtySixStratagems.Core",
+        "ThirtySixStratagems.Data"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
