@@ -516,6 +516,8 @@ namespace ThirtySixStratagems.Battle
                 TerritoryId = _currentBattle.TerritoryId,
                 AttackerVictory = attackerVictory,
                 VictorFactionId = attackerVictory ? attacker.FactionId : defender.FactionId,
+                AttackerFactionId = attacker.FactionId,
+                DefenderFactionId = defender.FactionId,
                 AttackerTotalCasualties = attackerCasualties,
                 DefenderTotalCasualties = defenderCasualties,
                 AttackerSurvivors = Mathf.Max(0, attacker.CurrentSoldiers),
@@ -806,12 +808,23 @@ namespace ThirtySixStratagems.Battle
         public string TerritoryId;
         public bool AttackerVictory;
         public string VictorFactionId;
+        public string AttackerFactionId;
+        public string DefenderFactionId;
         public int AttackerTotalCasualties;
         public int DefenderTotalCasualties;
         public int AttackerSurvivors;
         public int DefenderSurvivors;
+        public int DefenderRemainingeSoldiers => DefenderSurvivors;
         public int TotalRounds;
         public bool TerritoryConquered;
+
+        /// <summary>
+        /// 指定勢力が勝利したかどうか
+        /// </summary>
+        public bool IsVictory(string factionId)
+        {
+            return VictorFactionId == factionId;
+        }
     }
 
     /// <summary>
