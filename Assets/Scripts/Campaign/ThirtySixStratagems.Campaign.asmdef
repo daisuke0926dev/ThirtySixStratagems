@@ -1,0 +1,17 @@
+{
+    "name": "ThirtySixStratagems.Campaign",
+    "rootNamespace": "ThirtySixStratagems.Campaign",
+    "references": [
+        "ThirtySixStratagems.Core",
+        "ThirtySixStratagems.Data"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
