@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using ThirtySixStratagems.Battle;
+using ThirtySixStratagems.Data.Models;
 
 namespace ThirtySixStratagems.Scene
 {
@@ -30,17 +31,35 @@ namespace ThirtySixStratagems.Scene
         [SerializeField] private GameObject _damageTextPrefab;
         [SerializeField] private Transform _effectsContainer;
 
+        [Header("攻撃エフェクト種類")]
+        [SerializeField] private GameObject _slashEffectPrefab;      // 斬撃
+        [SerializeField] private GameObject _chargeEffectPrefab;     // 突撃
+        [SerializeField] private GameObject _arrowEffectPrefab;      // 矢
+        [SerializeField] private GameObject _criticalEffectPrefab;   // クリティカル
+
+        [Header("計略エフェクト")]
+        [SerializeField] private GameObject _stratagemEffectPrefab;  // 計略発動
+        [SerializeField] private Color _stratagemEffectColor = new Color(0.8f, 0.2f, 1f, 1f);
+
         [Header("アニメーション設定")]
         [SerializeField] private float _attackAnimationDuration = 0.5f;
         [SerializeField] private float _damageAnimationDuration = 0.3f;
         [SerializeField] private float _shakeIntensity = 0.1f;
         [SerializeField] private AnimationCurve _attackCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+        [Header("カメラ演出")]
+        [SerializeField] private Camera _battleCamera;
+        [SerializeField] private float _cameraShakeIntensity = 0.15f;
+        [SerializeField] private float _cameraShakeDuration = 0.3f;
+        [SerializeField] private float _slowMotionScale = 0.3f;
+        [SerializeField] private float _slowMotionDuration = 0.5f;
+
         [Header("色設定")]
         [SerializeField] private Color _attackerColor = new Color(0.2f, 0.5f, 1f);
         [SerializeField] private Color _defenderColor = new Color(1f, 0.3f, 0.3f);
         [SerializeField] private Color _healthFullColor = Color.green;
         [SerializeField] private Color _healthLowColor = Color.red;
+        [SerializeField] private Color _criticalDamageColor = new Color(1f, 0.8f, 0f);
 
         // 状態
         private BattleState _currentBattle;
@@ -367,6 +386,240 @@ namespace ThirtySixStratagems.Scene
 
                 yield return null;
             }
+        }
+
+        /// <summary>
+        /// 攻撃エフェクトを種類別に再生
+        /// </summary>
+        public void PlayAttackEffect(AttackEffectType effectType, Vector3 position)
+        {
+            GameObject prefab = GetEffectPrefab(effectType);
+            if (prefab == null || _effectsContainer == null) return;
+
+            var effect = Instantiate(prefab, position, Quaternion.identity, _effectsContainer);
+            Destroy(effect, 1f);
+        }
+
+        /// <summary>
+        /// エフェクトプレハブを取得
+        /// </summary>
+        private GameObject GetEffectPrefab(AttackEffectType effectType)
+        {
+            switch (effectType)
+            {
+                case AttackEffectType.Slash:
+                    return _slashEffectPrefab ?? _attackEffectPrefab;
+                case AttackEffectType.Charge:
+                    return _chargeEffectPrefab ?? _attackEffectPrefab;
+                case AttackEffectType.Arrow:
+                    return _arrowEffectPrefab ?? _attackEffectPrefab;
+                case AttackEffectType.Critical:
+                    return _criticalEffectPrefab ?? _attackEffectPrefab;
+                default:
+                    return _attackEffectPrefab;
+            }
+        }
+
+        /// <summary>
+        /// クリティカルヒットエフェクトを再生
+        /// </summary>
+        public IEnumerator PlayCriticalHitEffect(Transform target)
+        {
+            if (target == null) yield break;
+
+            // クリティカルエフェクト表示
+            if (_criticalEffectPrefab != null && _effectsContainer != null)
+            {
+                var effect = Instantiate(_criticalEffectPrefab, target.position, Quaternion.identity, _effectsContainer);
+                Destroy(effect, 1.5f);
+            }
+
+            // カメラシェイク
+            yield return StartCoroutine(PlayCameraShake(_cameraShakeIntensity * 1.5f, _cameraShakeDuration));
+
+            // スローモーション
+            yield return StartCoroutine(PlaySlowMotion());
+        }
+
+        /// <summary>
+        /// 計略発動エフェクトを再生
+        /// </summary>
+        public IEnumerator PlayStratagemEffect(Transform target, string stratagemName)
+        {
+            if (target == null) yield break;
+
+            // 計略エフェクト表示
+            if (_stratagemEffectPrefab != null && _effectsContainer != null)
+            {
+                var effect = Instantiate(_stratagemEffectPrefab, target.position, Quaternion.identity, _effectsContainer);
+
+                // エフェクトの色を設定
+                var spriteRenderer = effect.GetComponent<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    spriteRenderer.color = _stratagemEffectColor;
+                }
+
+                Destroy(effect, 2f);
+            }
+
+            // 計略名を表示
+            ShowStratagemText(target.position, stratagemName);
+
+            // スローモーション演出
+            yield return StartCoroutine(PlaySlowMotion(_slowMotionScale * 0.5f, _slowMotionDuration * 0.7f));
+        }
+
+        /// <summary>
+        /// 計略名テキストを表示
+        /// </summary>
+        private void ShowStratagemText(Vector3 position, string stratagemName)
+        {
+            if (_damageTextPrefab == null) return;
+
+            var textObj = Instantiate(_damageTextPrefab, position + Vector3.up * 1.5f, Quaternion.identity, _effectsContainer);
+
+            var textMesh = textObj.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = stratagemName;
+                textMesh.color = _stratagemEffectColor;
+                textMesh.fontSize = 5f;
+            }
+
+            StartCoroutine(FloatUpAndFade(textObj));
+        }
+
+        /// <summary>
+        /// カメラシェイクを再生
+        /// </summary>
+        public IEnumerator PlayCameraShake()
+        {
+            yield return PlayCameraShake(_cameraShakeIntensity, _cameraShakeDuration);
+        }
+
+        /// <summary>
+        /// カメラシェイクを再生（パラメータ指定）
+        /// </summary>
+        public IEnumerator PlayCameraShake(float intensity, float duration)
+        {
+            if (_battleCamera == null) yield break;
+
+            Vector3 originalPos = _battleCamera.transform.localPosition;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime; // スローモーション中でも動作するように
+                float currentIntensity = intensity * (1f - elapsed / duration);
+
+                Vector3 shake = new Vector3(
+                    Random.Range(-currentIntensity, currentIntensity),
+                    Random.Range(-currentIntensity, currentIntensity),
+                    0);
+
+                _battleCamera.transform.localPosition = originalPos + shake;
+                yield return null;
+            }
+
+            _battleCamera.transform.localPosition = originalPos;
+        }
+
+        /// <summary>
+        /// スローモーション演出を再生
+        /// </summary>
+        public IEnumerator PlaySlowMotion()
+        {
+            yield return PlaySlowMotion(_slowMotionScale, _slowMotionDuration);
+        }
+
+        /// <summary>
+        /// スローモーション演出を再生（パラメータ指定）
+        /// </summary>
+        public IEnumerator PlaySlowMotion(float timeScale, float duration)
+        {
+            float originalTimeScale = Time.timeScale;
+            Time.timeScale = timeScale;
+
+            // unscaledDeltaTimeを使って待機
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            Time.timeScale = originalTimeScale;
+        }
+
+        /// <summary>
+        /// 強化された戦闘アニメーションを再生
+        /// </summary>
+        public IEnumerator PlayEnhancedCombatAnimation(BattleRoundResult result, bool isCritical = false, AttackEffectType attackType = AttackEffectType.Slash)
+        {
+            // 攻撃側の攻撃アニメーション
+            yield return StartCoroutine(PlayAttackAnimation(_attackerPosition, _defenderPosition));
+
+            // エフェクト再生
+            PlayAttackEffect(attackType, _defenderPosition.position);
+
+            // クリティカルヒットの場合は特別演出
+            if (isCritical)
+            {
+                yield return StartCoroutine(PlayCriticalHitEffect(_defenderPosition));
+            }
+            else
+            {
+                // 通常のカメラシェイク
+                StartCoroutine(PlayCameraShake(_cameraShakeIntensity * 0.5f, _cameraShakeDuration * 0.5f));
+            }
+
+            // 防御側へのダメージ表示
+            ShowDamageText(_defenderPosition, result.DefenderCasualties, isCritical);
+            yield return StartCoroutine(PlayShakeAnimation(_defenderPosition, _defenderOriginalPos));
+
+            yield return new WaitForSeconds(0.2f);
+
+            // 防御側の反撃アニメーション
+            yield return StartCoroutine(PlayAttackAnimation(_defenderPosition, _attackerPosition));
+
+            // 攻撃側へのダメージ表示
+            ShowDamageText(_attackerPosition, result.AttackerCasualties, false);
+            yield return StartCoroutine(PlayShakeAnimation(_attackerPosition, _attackerOriginalPos));
+
+            // 表示を更新
+            if (_currentBattle != null)
+            {
+                UpdateDisplay(_currentBattle);
+            }
+        }
+
+        /// <summary>
+        /// ダメージテキストを表示（クリティカル対応）
+        /// </summary>
+        private void ShowDamageText(Transform position, int damage, bool isCritical)
+        {
+            if (_damageTextPrefab == null || position == null) return;
+
+            var damageObj = Instantiate(_damageTextPrefab, position.position + Vector3.up, Quaternion.identity, _effectsContainer);
+
+            var textMesh = damageObj.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                if (isCritical)
+                {
+                    textMesh.text = $"CRITICAL!\n-{damage}";
+                    textMesh.color = _criticalDamageColor;
+                    textMesh.fontSize = 4.5f;
+                }
+                else
+                {
+                    textMesh.text = $"-{damage}";
+                    textMesh.color = Color.red;
+                }
+            }
+
+            StartCoroutine(FloatUpAndFade(damageObj));
         }
 
         /// <summary>
