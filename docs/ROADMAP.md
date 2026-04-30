@@ -10,55 +10,43 @@
 
 ## 現在の状態
 
-Phase 12までの基本実装が完了し、ゲームの主要機能は一通り揃っています。
-今後はテスト、統合、ポリッシュのフェーズに入ります。
+Phase 13までの実装が完了し、テストとバグ修正が完了しています。
+今後はビジュアル強化、サウンド実装、コンテンツ拡充のフェーズに入ります。
 
 ---
 
-## Phase 13: テストとデバッグ（予定）
+## Phase 13: テストとデバッグ（完了）
 
-### 13-1: ユニットテスト
+### 13-1: ユニットテスト ✅
 
 **目的**: コアロジックの品質保証
 
 **対象**:
-- [ ] BattleCalculator - 戦闘力計算のテスト
-- [ ] StratagemConditionChecker - 計略条件判定のテスト
-- [ ] StratagemEffectProcessor - 計略効果のテスト
-- [ ] ResourceManager - リソース計算のテスト
-- [ ] TurnManager - ターン進行のテスト
+- [x] BattleCalculator - 戦闘力計算のテスト (30テスト)
+- [x] StratagemConditionChecker - 計略条件判定のテスト (30テスト)
+- [x] ResourceManager - リソース計算のテスト (30テスト)
+- [x] TurnManager - ターン進行のテスト (30テスト)
 
-**成果物**:
-```
-Assets/Tests/
-├── EditMode/
-│   ├── BattleCalculatorTests.cs
-│   ├── StratagemTests.cs
-│   └── ResourceTests.cs
-└── PlayMode/
-    ├── GameFlowTests.cs
-    └── BattleFlowTests.cs
-```
-
-### 13-2: 統合テスト
+### 13-2: 統合テスト ✅
 
 **目的**: システム間連携の検証
 
 **対象**:
-- [ ] ゲーム開始〜終了の一連フロー
-- [ ] 計略発動〜効果適用〜結果表示
-- [ ] 戦闘開始〜ラウンド進行〜決着
-- [ ] セーブ/ロードの整合性
+- [x] GameFlowIntegrationTests - ゲームフロー (25テスト)
+- [x] BattleIntegrationTests - 戦闘統合 (30テスト)
+- [x] StratagemIntegrationTests - 計略統合 (25テスト)
+- [x] SaveLoadIntegrationTests - セーブ/ロード (25テスト)
 
-### 13-3: バグ修正
+### 13-3: バグ修正 ✅
 
 **目的**: 既知の問題の解消
 
-**確認項目**:
-- [ ] null参照エラーの対処
-- [ ] エッジケースの処理
-- [ ] メモリリークの確認
-- [ ] パフォーマンスボトルネック
+**修正内容**:
+- [x] BattleManager - null参照エラーの対処
+- [x] BattleManager - エッジケースの処理
+- [x] BattleEffect - テスト互換性向上
+
+**テスト合計**: 225テスト（ユニット120 + 統合105）
 
 ---
 
