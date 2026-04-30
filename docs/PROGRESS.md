@@ -5,7 +5,7 @@
 このドキュメントでは、プロジェクトの実装進捗を記録します。
 
 **最終更新**: 2026-04-30
-**現在のフェーズ**: Phase 12 完了
+**現在のフェーズ**: Phase 13 完了
 
 ---
 
@@ -25,6 +25,7 @@
 | 10 | システム統合 | 完了 | #41-#42 |
 | 11 | シナリオデータ | 完了 | #43-#44 |
 | 12 | シーン/UI統合 | 完了 | #45-#47 |
+| 13 | テスト・デバッグ | 完了 | #48-#51 |
 
 ---
 
@@ -218,13 +219,66 @@
   - 成功率計算（知力ボーナス込み）
   - 計略ポイント確認
 
+### Phase 13: テスト・デバッグ
+
+**Phase 13-1: ユニットテスト** (PR #49)
+- `TestHelpers.cs` - テスト用ヘルパークラス
+  - テスト用データファクトリ
+  - BattleUnit, BattleState, Faction等の生成
+- `BattleCalculatorTests.cs` (30テスト)
+  - CombatStats計算テスト
+  - ダメージ計算テスト
+  - 士気効果テスト
+- `StratagemConditionCheckerTests.cs` (30テスト)
+  - 計略条件判定テスト
+  - リソースチェックテスト
+  - 成功率計算テスト
+- `ResourceManagerTests.cs` (30テスト)
+  - 収入計算テスト
+  - 消費処理テスト
+  - 計略ポイント回復テスト
+- `TurnManagerTests.cs` (30テスト)
+  - ターン進行テスト
+  - フェーズ遷移テスト
+  - 勝敗条件テスト
+
+**Phase 13-2: 統合テスト** (PR #50)
+- `GameFlowIntegrationTests.cs` (25テスト)
+  - ゲーム初期化テスト
+  - ターンフローテスト
+  - リソースフローテスト
+  - 勝利条件テスト
+- `BattleIntegrationTests.cs` (30テスト)
+  - 戦闘セットアップテスト
+  - 戦闘ラウンドテスト
+  - 戦闘決着テスト
+  - 士気・指揮官効果テスト
+- `StratagemIntegrationTests.cs` (25テスト)
+  - 計略コストテスト
+  - 成功率テスト
+  - 効果適用テスト
+  - 効果持続時間テスト
+- `SaveLoadIntegrationTests.cs` (25テスト)
+  - データ構造テスト
+  - 整合性テスト
+  - シリアライズテスト
+
+**Phase 13-3: バグ修正** (PR #51)
+- `BattleManager.cs` 修正
+  - CreateTerritoryDefenseのnullチェック追加
+  - StartBattleのエッジケース処理
+  - BattleEffectにDurationプロパティ追加
+
+**テスト合計**: 225テスト（ユニット120 + 統合105）
+
 ---
 
 ## ファイル構成
 
 ```
-Assets/Scripts/
-├── AI/                          # AIシステム
+Assets/
+├── Scripts/
+│   ├── AI/                          # AIシステム
 │   ├── AIManager.cs
 │   ├── BattleAI.cs
 │   ├── FactionAI.cs
@@ -323,6 +377,20 @@ Assets/Scripts/
     │   └── StratagemListPanel.cs
     └── Territory/
         └── TerritoryInfoPanel.cs
+├── Tests/                       # テスト
+│   ├── EditMode/
+│   │   ├── ThirtySixStratagems.Tests.EditMode.asmdef
+│   │   ├── TestHelpers.cs
+│   │   ├── BattleCalculatorTests.cs
+│   │   ├── StratagemConditionCheckerTests.cs
+│   │   ├── ResourceManagerTests.cs
+│   │   ├── TurnManagerTests.cs
+│   │   ├── GameFlowIntegrationTests.cs
+│   │   ├── BattleIntegrationTests.cs
+│   │   ├── StratagemIntegrationTests.cs
+│   │   └── SaveLoadIntegrationTests.cs
+│   └── PlayMode/
+│       └── ThirtySixStratagems.Tests.PlayMode.asmdef
 ```
 
 ---
@@ -335,6 +403,7 @@ Assets/Scripts/
 | Beta版 | Phase 6-7 | 完了 |
 | RC版 | Phase 8 | 完了 |
 | Release準備 | Phase 9-12 | 完了 |
+| テスト完了 | Phase 13 | 完了 |
 
 ---
 
