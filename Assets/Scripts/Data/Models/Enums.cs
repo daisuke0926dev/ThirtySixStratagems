@@ -143,6 +143,19 @@ namespace ThirtySixStratagems.Data.Models
     }
 
     /// <summary>
+    /// 地形タイプ
+    /// </summary>
+    public enum TerrainType
+    {
+        Plain,          // 平地
+        Mountain,       // 山地
+        Forest,         // 森林
+        River,          // 河川
+        Fortress,       // 要塞
+        Capital         // 都市
+    }
+
+    /// <summary>
     /// 外交関係
     /// </summary>
     public enum DiplomaticStatus

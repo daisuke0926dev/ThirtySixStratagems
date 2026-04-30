@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using ThirtySixStratagems.Data.Models;
 
 namespace ThirtySixStratagems.Scene
 {
@@ -14,8 +15,10 @@ namespace ThirtySixStratagems.Scene
         [SerializeField] private SpriteRenderer _mainSprite;
         [SerializeField] private SpriteRenderer _outlineSprite;
         [SerializeField] private SpriteRenderer _highlightSprite;
+        [SerializeField] private SpriteRenderer _terrainBgSprite;
         [SerializeField] private TextMeshPro _nameLabel;
         [SerializeField] private TextMesh _nameLabelLegacy;
+        [SerializeField] private TextMesh _armyCountLabel;
 
         [Header("色設定")]
         [SerializeField] private Color _selectedOutlineColor = Color.yellow;
@@ -29,9 +32,11 @@ namespace ThirtySixStratagems.Scene
         // 状態
         private string _territoryId;
         private string _territoryName;
+        private TerrainType _terrainType;
         private bool _isSelected;
         private bool _isHighlighted;
         private Color _baseColor = Color.white;
+        private Color _terrainColor = Color.white;
         private Vector3 _originalScale;
 
         /// <summary>
@@ -49,6 +54,11 @@ namespace ThirtySixStratagems.Scene
         /// </summary>
         public bool IsSelected => _isSelected;
 
+        /// <summary>
+        /// 地形タイプ
+        /// </summary>
+        public TerrainType TerrainType => _terrainType;
+
         private void Awake()
         {
             _originalScale = transform.localScale;
@@ -57,6 +67,26 @@ namespace ThirtySixStratagems.Scene
             if (_mainSprite == null)
             {
                 _mainSprite = GetComponent<SpriteRenderer>();
+            }
+
+            // 地形背景スプライトを取得
+            if (_terrainBgSprite == null)
+            {
+                var bgObj = transform.Find("TerrainBg");
+                if (bgObj != null)
+                {
+                    _terrainBgSprite = bgObj.GetComponent<SpriteRenderer>();
+                }
+            }
+
+            // 兵力表示ラベルを取得
+            if (_armyCountLabel == null)
+            {
+                var countObj = transform.Find("ArmyCount");
+                if (countObj != null)
+                {
+                    _armyCountLabel = countObj.GetComponent<TextMesh>();
+                }
             }
         }
 
@@ -75,8 +105,17 @@ namespace ThirtySixStratagems.Scene
         /// </summary>
         public void Initialize(string territoryId, string territoryName)
         {
+            Initialize(territoryId, territoryName, TerrainType.Plain);
+        }
+
+        /// <summary>
+        /// 初期化（地形タイプ付き）
+        /// </summary>
+        public void Initialize(string territoryId, string territoryName, TerrainType terrainType)
+        {
             _territoryId = territoryId;
             _territoryName = territoryName;
+            _terrainType = terrainType;
 
             SetName(territoryName);
         }
@@ -109,6 +148,19 @@ namespace ThirtySixStratagems.Scene
             if (_mainSprite != null)
             {
                 _mainSprite.color = color;
+            }
+        }
+
+        /// <summary>
+        /// 地形色を設定
+        /// </summary>
+        public void SetTerrainColor(Color color)
+        {
+            _terrainColor = color;
+
+            if (_terrainBgSprite != null)
+            {
+                _terrainBgSprite.color = color * 0.6f;
             }
         }
 
@@ -182,7 +234,33 @@ namespace ThirtySixStratagems.Scene
         /// </summary>
         public void UpdateArmyDisplay(int soldierCount)
         {
-            // 将来の拡張用：領地上に兵力を表示
+            if (_armyCountLabel == null) return;
+
+            if (soldierCount > 0)
+            {
+                _armyCountLabel.gameObject.SetActive(true);
+                _armyCountLabel.text = FormatSoldierCount(soldierCount);
+            }
+            else
+            {
+                _armyCountLabel.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 兵力を表示用にフォーマット
+        /// </summary>
+        private string FormatSoldierCount(int count)
+        {
+            if (count >= 10000)
+            {
+                return $"{count / 10000f:F1}万";
+            }
+            else if (count >= 1000)
+            {
+                return $"{count / 1000f:F1}千";
+            }
+            return count.ToString();
         }
 
         private void OnMouseEnter()
