@@ -156,6 +156,18 @@ namespace ThirtySixStratagems.Data.Models
     }
 
     /// <summary>
+    /// 攻撃エフェクトタイプ
+    /// </summary>
+    public enum AttackEffectType
+    {
+        Normal,         // 通常攻撃
+        Slash,          // 斬撃
+        Charge,         // 突撃
+        Arrow,          // 矢
+        Critical        // クリティカル
+    }
+
+    /// <summary>
     /// 外交関係
     /// </summary>
     public enum DiplomaticStatus
