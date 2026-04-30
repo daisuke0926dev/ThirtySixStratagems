@@ -86,6 +86,14 @@ namespace ThirtySixStratagems.Battle
             // 攻撃側の設定
             _currentBattle.Attacker = CreateBattleUnit(attackerArmy, false);
 
+            // 攻撃側ユニットの作成に失敗した場合
+            if (_currentBattle.Attacker == null)
+            {
+                Debug.LogError("Failed to create attacker unit");
+                _currentBattle = null;
+                return null;
+            }
+
             // 防御側の設定
             if (defenderArmy != null)
             {
@@ -95,6 +103,14 @@ namespace ThirtySixStratagems.Battle
             {
                 // 守備軍がいない場合は領地の防御力のみ
                 _currentBattle.Defender = CreateTerritoryDefense(territory);
+            }
+
+            // 防御側ユニットの作成に失敗した場合
+            if (_currentBattle.Defender == null)
+            {
+                Debug.LogError("Failed to create defender unit");
+                _currentBattle = null;
+                return null;
             }
 
             // 地形効果を適用
@@ -155,17 +171,36 @@ namespace ThirtySixStratagems.Battle
         /// </summary>
         private BattleUnit CreateTerritoryDefense(Territory territory)
         {
+            // null参照エラーを防ぐ
+            if (territory == null)
+            {
+                Debug.LogError("CreateTerritoryDefense: Territory is null");
+                return new BattleUnit
+                {
+                    ArmyId = null,
+                    ArmyName = "守備隊",
+                    FactionId = "",
+                    FactionName = "不明",
+                    IsDefender = true,
+                    InitialSoldiers = 10,
+                    CurrentSoldiers = 10,
+                    Morale = 50,
+                    BaseCombatPower = 1,
+                    ActiveEffects = new List<BattleEffect>()
+                };
+            }
+
             return new BattleUnit
             {
                 ArmyId = null,
                 ArmyName = $"{territory.Name}守備隊",
-                FactionId = territory.OwnerId,
+                FactionId = territory.OwnerId ?? "",
                 FactionName = GameManager.Instance?.GetFaction(territory.OwnerId)?.Name ?? "不明",
                 IsDefender = true,
                 InitialSoldiers = territory.Defense * 10, // 防御力から仮想兵力を計算
                 CurrentSoldiers = territory.Defense * 10,
                 Morale = 50,
-                BaseCombatPower = territory.Defense,
+                BaseCombatPower = Mathf.Max(1, territory.Defense),
                 ActiveEffects = new List<BattleEffect>()
             };
         }
@@ -780,6 +815,15 @@ namespace ThirtySixStratagems.Battle
         public string EffectName;
         public int PowerModifier;
         public int DurationRounds;
+
+        /// <summary>
+        /// DurationRoundsのエイリアス（テスト互換性用）
+        /// </summary>
+        public int Duration
+        {
+            get => DurationRounds;
+            set => DurationRounds = value;
+        }
     }
 
     /// <summary>
