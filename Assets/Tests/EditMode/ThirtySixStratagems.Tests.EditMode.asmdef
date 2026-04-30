@@ -1,0 +1,28 @@
+{
+    "name": "ThirtySixStratagems.Tests.EditMode",
+    "rootNamespace": "ThirtySixStratagems.Tests.EditMode",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "ThirtySixStratagems.Core",
+        "ThirtySixStratagems.Data",
+        "ThirtySixStratagems.Battle",
+        "ThirtySixStratagems.Stratagem",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
