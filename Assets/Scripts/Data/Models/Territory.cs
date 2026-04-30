@@ -39,6 +39,9 @@ namespace ThirtySixStratagems.Data.Models
         [Header("位置")]
         public Vector2 MapPosition;
 
+        [Header("地形")]
+        public TerrainType TerrainType = TerrainType.Plain;
+
         /// <summary>
         /// 収入を計算
         /// </summary>
