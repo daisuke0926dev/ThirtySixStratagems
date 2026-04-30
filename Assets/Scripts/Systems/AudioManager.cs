@@ -538,14 +538,48 @@ namespace ThirtySixStratagems.Systems
     /// </summary>
     public enum SEType
     {
+        // UI
         ButtonClick,
+        ButtonHover,
+        PanelOpen,
+        PanelClose,
         Notification,
-        StratagemSuccess,
-        StratagemFail,
+        Error,
+        Confirm,
+        Cancel,
+
+        // ゲーム
+        TurnStart,
+        TurnEnd,
+        PhaseChange,
+        ResourceGain,
+        ResourceLose,
+
+        // 戦闘
         BattleStart,
         BattleWin,
         BattleLose,
-        TurnEnd
+        Attack,
+        AttackHit,
+        AttackCritical,
+        Defend,
+        Damage,
+        Death,
+        Retreat,
+        Charge,
+        Arrow,
+
+        // 計略
+        StratagemSelect,
+        StratagemExecute,
+        StratagemSuccess,
+        StratagemFail,
+
+        // マップ
+        TerritorySelect,
+        TerritoryCapture,
+        ArmyMove,
+        ArmyArrive
     }
 
     #endregion
