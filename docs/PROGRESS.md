@@ -5,7 +5,7 @@
 このドキュメントでは、プロジェクトの実装進捗を記録します。
 
 **最終更新**: 2026-04-30
-**現在のフェーズ**: Phase 13 完了
+**現在のフェーズ**: Phase 14 完了
 
 ---
 
@@ -26,6 +26,7 @@
 | 11 | シナリオデータ | 完了 | #43-#44 |
 | 12 | シーン/UI統合 | 完了 | #45-#47 |
 | 13 | テスト・デバッグ | 完了 | #48-#51 |
+| 14 | ビジュアル強化 | 完了 | #53-#55 |
 
 ---
 
@@ -271,6 +272,45 @@
 
 **テスト合計**: 225テスト（ユニット120 + 統合105）
 
+### Phase 14: ビジュアル強化
+
+**Phase 14-1: マップビジュアル改善** (PR #53)
+- `MapDisplay.cs` 拡張
+  - 地形タイプに応じた背景色
+  - プロシージャルな地形パターン（Perlinノイズ）
+  - 軍隊アイコン表示
+  - 兵力フォーマット（1.5万、5千等）
+- `TerritoryVisual.cs` 拡張
+  - 地形背景スプライト対応
+  - 兵力表示ラベル
+- `MiniMap.cs` 新規作成
+  - リアルタイムマップ概要
+  - ビューポートインジケーター
+  - クリックナビゲーション
+- `TerrainType` enum追加
+
+**Phase 14-2: バトルビジュアル改善** (PR #54)
+- `BattleDisplay.cs` 拡張
+  - 攻撃エフェクト種類（斬撃、突撃、矢、クリティカル）
+  - 計略発動エフェクト表示
+  - カメラシェイク演出
+  - スローモーション演出
+  - 強化戦闘アニメーション
+- `UnitSpriteGenerator.cs` 新規作成
+  - プロシージャルユニットスプライト生成
+  - 歩兵、騎兵、弓兵、将軍タイプ
+  - エフェクトスプライト生成
+- `AttackEffectType` enum追加
+
+**Phase 14-3: UI/UXポリッシュ** (PR #55)
+- `UIAnimator.cs` - パネルアニメーション（スケール、フェード、スライド）
+- `ToastManager.cs` - トースト通知システム
+- `TooltipManager.cs` / `TooltipTrigger.cs` - ツールチップシステム
+- `UIButton.cs` - 拡張ボタン（ホバー、プレス効果）
+- `LoadingScreen.cs` - ローディング画面（プログレスバー、ヒント表示）
+- `ConfirmDialog.cs` - 確認ダイアログ
+- `UITheme.cs` - テーマ設定（色、フォント、スペーシング）
+
 ---
 
 ## ファイル構成
@@ -329,7 +369,9 @@ Assets/
 │   ├── BattleSceneController.cs
 │   ├── GameSceneController.cs
 │   ├── MapDisplay.cs
-│   └── TerritoryVisual.cs
+│   ├── MiniMap.cs
+│   ├── TerritoryVisual.cs
+│   └── UnitSpriteGenerator.cs
 ├── Stratagem/                   # 計略システム
 │   ├── StratagemConditionChecker.cs
 │   ├── StratagemEffectProcessor.cs
@@ -348,6 +390,14 @@ Assets/
 │   ├── UITransitionManager.cs
 │   └── VisualEffectsManager.cs
 └── UI/                          # UI
+    ├── ConfirmDialog.cs
+    ├── LoadingScreen.cs
+    ├── ToastManager.cs
+    ├── TooltipManager.cs
+    ├── TooltipTrigger.cs
+    ├── UIAnimator.cs
+    ├── UIButton.cs
+    ├── UITheme.cs
     ├── Battle/
     │   ├── BattlePanel.cs
     │   ├── BattleStratagemPanel.cs
@@ -404,6 +454,7 @@ Assets/
 | RC版 | Phase 8 | 完了 |
 | Release準備 | Phase 9-12 | 完了 |
 | テスト完了 | Phase 13 | 完了 |
+| ビジュアル強化 | Phase 14 | 完了 |
 
 ---
 
